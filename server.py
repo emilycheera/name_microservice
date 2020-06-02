@@ -17,19 +17,19 @@ def get_info_from_name():
     # Make call to gender API
     gender_res = get_gender(name)
     if gender_res.get("error"):
-        return jsonify(result), 500
+        return jsonify(gender_res), 500
     gender = gender_res.get("gender")
 
     # Make call to age API
     age_res = get_age(name)
     if age_res.get("error"):
-        return jsonify(result), 500
+        return jsonify(age_res), 500
     age = age_res.get("age")
 
     # Make call to nationality API
     nationality_res = get_nationality(name)
     if nationality_res.get("error"):
-        return jsonify(result), 500
+        return jsonify(nationality_res), 500
     nationality = nationality_res.get("nationality")
 
     # return JSON

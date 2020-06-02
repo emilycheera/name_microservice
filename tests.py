@@ -1,6 +1,7 @@
 import unittest
 import json
 from server import app
+import responses
 
 class TestNameMicroservice(unittest.TestCase):
     """Test that naming microservice works as expected."""
@@ -16,7 +17,7 @@ class TestNameMicroservice(unittest.TestCase):
         """Test that microservice works with valid input."""
 
         res = self.client.post("/", data=json.dumps({"name": "peter"}),
-                               content_type="application/json")
+                                    content_type="application/json")
         data = res.json
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["age"], 57)
@@ -26,7 +27,7 @@ class TestNameMicroservice(unittest.TestCase):
         """Test that microservice returns None values given invalid name."""
 
         res = self.client.post("/", data=json.dumps({"name": "jlkajsdflkajs"}),
-                               content_type="application/json")
+                                    content_type="application/json")
         data = res.json
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["age"], None)
@@ -36,11 +37,18 @@ class TestNameMicroservice(unittest.TestCase):
         """Test that microservice sends error when given digit as name."""
 
         res = self.client.post("/", data=json.dumps({"name": "3"}),
-                               content_type="application/json")
+                                    content_type="application/json")
         data = res.json
         self.assertEqual(res.status_code, 400)
         self.assertIn("error", data)
 
+    @responses.activate
+    def test_mock_requests(self):
+        responses.add(responses.GET, 'https://api.genderize.io/?name=peter', status=500)
+        res = self.client.post("/", data=json.dumps({"name": "peter"}),
+                                    content_type="application/json")
+        data = res.json
+        self.assertEqual(data["error"], "Unable to retrieve gender")
 
 if __name__ == "__main__":
     unittest.main()

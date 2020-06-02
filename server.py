@@ -1,7 +1,5 @@
 from helpers import get_gender, get_age, get_nationality
 from flask import Flask, jsonify, request
-import requests
-
 
 app = Flask(__name__)
 
